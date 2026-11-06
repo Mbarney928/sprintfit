@@ -96,7 +96,10 @@ export function CapacityChart({ loads }: CapacityChartProps) {
                       type="button"
                       className={styles.plot}
                       onClick={() => {
-                        setActive((current) => (current === l.member.id ? null : l.member.id));
+                        setActive(l.member.id);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Escape') setActive(null);
                       }}
                       aria-describedby={isActive ? tooltipId : undefined}
                       onMouseEnter={() => {

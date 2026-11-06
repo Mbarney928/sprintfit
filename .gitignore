@@ -1,0 +1,47 @@
+# Dependencies and build output
+node_modules/
+dist/
+dist-ssr/
+storybook-static/
+coverage/
+.lighthouseci/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+*.tsbuildinfo
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.local
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+id_rsa*
+id_ed25519*
+secrets/
+credentials*.json
+.npmrc
+.pypirc
+
+# Local data
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Editors and OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.sw?
+.DS_Store
+Thumbs.db

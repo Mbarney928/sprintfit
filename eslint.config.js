@@ -88,7 +88,7 @@ export default tseslint.config(
     rules: { 'react-refresh/only-export-components': 'off' },
   },
   {
-    files: ['*.config.{js,ts}', 'e2e/**/*.ts', 'scripts/**/*.{js,ts}', '.storybook/**/*.ts'],
+    files: ['*.config.{js,ts}', 'e2e/**/*.ts', 'scripts/**/*.{js,ts}', '.storybook/**/*.{ts,tsx}'],
     languageOptions: { globals: globals.node },
   },
 );

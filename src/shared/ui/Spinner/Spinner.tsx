@@ -6,7 +6,7 @@ export interface SpinnerProps {
   /** Accessible name announced to screen readers. */
   label?: string;
   size?: 'sm' | 'md';
-  className?: string;
+  className?: string | undefined;
 }
 
 export function Spinner({ label = 'Loading', size = 'md', className }: SpinnerProps) {

@@ -29,7 +29,10 @@ export default tseslint.config(
       '@typescript-eslint/consistent-type-imports': 'error',
       'no-restricted-syntax': [
         'error',
-        { selector: "JSXAttribute[name.name='dangerouslySetInnerHTML']", message: 'Raw HTML injection is not allowed.' },
+        {
+          selector: "JSXAttribute[name.name='dangerouslySetInnerHTML']",
+          message: 'Raw HTML injection is not allowed.',
+        },
       ],
     },
   },
@@ -42,25 +45,47 @@ export default tseslint.config(
       'import/resolver': { typescript: true, node: true },
     },
     rules: {
-      'boundaries/no-unknown': 'error',
-      'boundaries/element-types': [
+      'boundaries/no-unknown-dependencies': 'error',
+      'boundaries/dependencies': [
         'error',
         {
           default: 'disallow',
-          message: '${file.type} must not import from ${dependency.type} (layers may only import downwards)',
-          rules: layers.map((type, i) => ({ from: type, allow: layers.slice(i + 1).concat(type === 'shared' ? ['shared'] : []) })),
+          message:
+            '{{ from.element.types.[0] }} must not import from {{ to.element.types.[0] }}: layers may only import downwards',
+          policies: layers.map((type, i) => ({
+            from: { element: { type } },
+            allow: {
+              to: { element: { types: [...layers.slice(i + 1), ...(type === 'shared' ? ['shared'] : [])] } },
+            },
+          })),
         },
       ],
       // Slices are consumed through their public index, never by reaching into internals.
       'no-restricted-imports': [
         'error',
-        { patterns: [{ regex: '^@/(pages|widgets|features|entities)/[^/]+/.+', message: 'Import slices through their public index (e.g. @/entities/member).' }] },
+        {
+          patterns: [
+            {
+              regex: '^@/(pages|widgets|features|entities)/[^/]+/.+',
+              message: 'Import slices through their public index (e.g. @/entities/member).',
+            },
+          ],
+        },
       ],
     },
   },
   {
     files: ['**/*.test.{ts,tsx}', '**/*.stories.tsx', 'src/test/**', 'e2e/**'],
-    rules: { 'boundaries/element-types': 'off', 'no-restricted-imports': 'off' },
+    rules: {
+      'boundaries/dependencies': 'off',
+      'boundaries/no-unknown-dependencies': 'off',
+      'no-restricted-imports': 'off',
+    },
+  },
+  {
+    // The route table is configuration, not a component module.
+    files: ['src/app/routes.tsx'],
+    rules: { 'react-refresh/only-export-components': 'off' },
   },
   {
     files: ['*.config.{js,ts}', 'e2e/**/*.ts', 'scripts/**/*.{js,ts}', '.storybook/**/*.ts'],

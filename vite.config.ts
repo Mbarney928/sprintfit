@@ -17,7 +17,8 @@ export default defineConfig({
     rollupOptions: {
       output: {
         // Keep framework code in its own long-cached chunk.
-        manualChunks: (id) => (/node_modules\/(react|react-dom|scheduler|react-router)\//.test(id) ? 'react' : undefined),
+        manualChunks: (id) =>
+          /node_modules\/(react|react-dom|scheduler|react-router)\//.test(id) ? 'react' : undefined,
       },
     },
   },
@@ -29,7 +30,14 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.stories.tsx', 'src/**/*.test.{ts,tsx}', 'src/test/**', 'src/main.tsx', 'src/**/index.ts', 'src/vite-env.d.ts'],
+      exclude: [
+        'src/**/*.stories.tsx',
+        'src/**/*.test.{ts,tsx}',
+        'src/test/**',
+        'src/main.tsx',
+        'src/**/index.ts',
+        'src/vite-env.d.ts',
+      ],
       thresholds: { lines: 85, functions: 85, statements: 85, branches: 80 },
     },
   },

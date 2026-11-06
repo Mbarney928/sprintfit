@@ -9,7 +9,12 @@ export interface ErrorStateProps {
 }
 
 /** An announced error with an optional recovery action. Never shows stack traces. */
-export function ErrorState({ title = 'Something went wrong', message, onRetry, retryLabel = 'Try again' }: ErrorStateProps) {
+export function ErrorState({
+  title = 'Something went wrong',
+  message,
+  onRetry,
+  retryLabel = 'Try again',
+}: ErrorStateProps) {
   return (
     <div role="alert" className={styles.error}>
       <p className={styles.title}>

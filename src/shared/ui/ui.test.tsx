@@ -4,7 +4,18 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { expectNoAxeViolations } from '@/test/axe';
 
-import { Badge, Button, Card, EmptyState, ErrorState, SelectField, Skeleton, Spinner, StatTile, TextField } from '.';
+import {
+  Badge,
+  Button,
+  Card,
+  EmptyState,
+  ErrorState,
+  SelectField,
+  Skeleton,
+  Spinner,
+  StatTile,
+  TextField,
+} from '.';
 
 describe('Button', () => {
   it('calls onClick and is keyboard operable', async () => {
@@ -52,7 +63,9 @@ describe('Button', () => {
 
 describe('form fields', () => {
   it('links label, hint and error to the input', async () => {
-    const { container } = render(<TextField label="Name" hint="As shown on the plan" error="Too short" defaultValue="A" />);
+    const { container } = render(
+      <TextField label="Name" hint="As shown on the plan" error="Too short" defaultValue="A" />,
+    );
     const input = screen.getByRole('textbox', { name: 'Name' });
     expect(input).toHaveAttribute('aria-invalid', 'true');
     expect(input).toHaveAccessibleDescription('As shown on the plan Too short');

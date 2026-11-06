@@ -24,7 +24,16 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, Va
   loading?: boolean;
 }
 
-export function Button({ variant, size, loading = false, disabled, className, children, type = 'button', ...rest }: ButtonProps) {
+export function Button({
+  variant,
+  size,
+  loading = false,
+  disabled,
+  className,
+  children,
+  type = 'button',
+  ...rest
+}: ButtonProps) {
   return (
     <button
       type={type}

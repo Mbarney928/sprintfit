@@ -22,7 +22,7 @@ export interface BadgeProps extends VariantProps<typeof badge> {
   children: ReactNode;
   /** Optional leading icon; status tones should always pair color with an icon or text. */
   icon?: ReactNode;
-  className?: string;
+  className?: string | undefined;
 }
 
 export function Badge({ tone, icon, className, children }: BadgeProps) {

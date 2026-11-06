@@ -8,3 +8,5 @@ export { Skeleton, type SkeletonProps } from './Skeleton/Skeleton';
 export { Spinner, type SpinnerProps } from './Spinner/Spinner';
 export { StatTile, type StatTileProps } from './StatTile/StatTile';
 export { TextField, type TextFieldProps } from './TextField/TextField';
+export { PageHeader, type PageHeaderProps } from './PageHeader/PageHeader';
+export { ScrollRegion, type ScrollRegionProps } from './ScrollRegion/ScrollRegion';

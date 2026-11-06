@@ -5,7 +5,7 @@ import styles from './Skeleton.module.css';
 export interface SkeletonProps {
   width?: string;
   height?: string;
-  className?: string;
+  className?: string | undefined;
 }
 
 /** Decorative placeholder shown while content loads; hidden from assistive technology. */

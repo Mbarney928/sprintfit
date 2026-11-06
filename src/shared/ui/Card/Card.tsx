@@ -11,14 +11,17 @@ export interface CardProps {
   /** Controls shown at the right of the header (buttons, toggles). */
   actions?: ReactNode;
   children: ReactNode;
-  className?: string;
+  className?: string | undefined;
 }
 
 /** A titled section. The title labels the region for assistive technology. */
 export function Card({ title, description, actions, children, className }: CardProps) {
   const titleId = useId();
   return (
-    <section className={cn(styles.card, className)} aria-labelledby={title !== undefined ? titleId : undefined}>
+    <section
+      className={cn(styles.card, className)}
+      aria-labelledby={title !== undefined ? titleId : undefined}
+    >
       {(title !== undefined || actions !== undefined) && (
         <header className={styles.header}>
           <div>

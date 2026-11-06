@@ -1,0 +1,4 @@
+.region {
+  overflow-x: auto;
+  border-radius: var(--radius-sm);
+}

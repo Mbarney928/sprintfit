@@ -11,7 +11,7 @@ export interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElemen
   hint?: string;
   /** Validation message; marks the input invalid and is announced with it. */
   error?: string | undefined;
-  className?: string;
+  className?: string | undefined;
 }
 
 export function TextField({ label, hint, error, id, className, ...input }: TextFieldProps) {

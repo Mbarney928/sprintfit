@@ -11,12 +11,15 @@ export interface SelectOption {
   label: string;
 }
 
-export interface SelectFieldProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'className' | 'multiple'> {
+export interface SelectFieldProps extends Omit<
+  SelectHTMLAttributes<HTMLSelectElement>,
+  'className' | 'multiple'
+> {
   label: string;
   options: readonly SelectOption[];
   hint?: string;
   error?: string | undefined;
-  className?: string;
+  className?: string | undefined;
 }
 
 export function SelectField({ label, options, hint, error, id, className, ...select }: SelectFieldProps) {

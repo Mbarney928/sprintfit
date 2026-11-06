@@ -42,7 +42,11 @@ function parse<S extends z.ZodType>(schema: S, input: unknown): z.infer<S> {
   return result.data;
 }
 
-export function createLocalApi({ store, latencyMs = 0, newId = () => crypto.randomUUID() }: LocalApiOptions): SprintApi {
+export function createLocalApi({
+  store,
+  latencyMs = 0,
+  newId = () => crypto.randomUUID(),
+}: LocalApiOptions): SprintApi {
   const delay = () => new Promise<void>((resolve) => setTimeout(resolve, latencyMs));
   const read = () => loadWorkspace(store, createSeedWorkspace);
   const write = (ws: Workspace) => {
@@ -91,10 +95,14 @@ export function createLocalApi({ store, latencyMs = 0, newId = () => crypto.rand
         const known = new Set(ws.items.map((i) => i.id));
         const dependsOn = [...new Set(data.dependsOn)];
         if (id !== undefined && dependsOn.includes(id)) {
-          throw new ApiError('validation', 'Some fields need attention.', { dependsOn: 'An item cannot depend on itself' });
+          throw new ApiError('validation', 'Some fields need attention.', {
+            dependsOn: 'An item cannot depend on itself',
+          });
         }
         if (dependsOn.some((d) => !known.has(d))) {
-          throw new ApiError('validation', 'Some fields need attention.', { dependsOn: 'Unknown dependency' });
+          throw new ApiError('validation', 'Some fields need attention.', {
+            dependsOn: 'Unknown dependency',
+          });
         }
         if (id !== undefined) {
           const index = ws.items.findIndex((i) => i.id === id);

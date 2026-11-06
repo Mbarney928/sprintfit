@@ -4,8 +4,21 @@ import { createLocalApi, type SprintApi } from './client';
 import { ApiError } from './errors';
 import type { MemberInput, WorkItemInput } from './schema';
 
-const member: MemberInput = { name: 'Sam Example', skill: 'qa', hoursPerDay: 6, focusFactor: 0.8, ptoDays: 0, onCallDays: 0 };
-const item: WorkItemInput = { title: 'Write release notes', estimateHours: 4, priority: 'low', skill: 'qa', dependsOn: [] };
+const member: MemberInput = {
+  name: 'Sam Example',
+  skill: 'qa',
+  hoursPerDay: 6,
+  focusFactor: 0.8,
+  ptoDays: 0,
+  onCallDays: 0,
+};
+const item: WorkItemInput = {
+  title: 'Write release notes',
+  estimateHours: 4,
+  priority: 'low',
+  skill: 'qa',
+  dependsOn: [],
+};
 
 async function expectApiError(p: Promise<unknown>, code: string, field?: string) {
   const error = await p.then(
@@ -60,7 +73,10 @@ describe('createLocalApi', () => {
   });
 
   it('updates the sprint and resets demo data', async () => {
-    await expect(api.updateSprint({ name: 'Sprint 25', workingDays: 8 })).resolves.toEqual({ name: 'Sprint 25', workingDays: 8 });
+    await expect(api.updateSprint({ name: 'Sprint 25', workingDays: 8 })).resolves.toEqual({
+      name: 'Sprint 25',
+      workingDays: 8,
+    });
     await expectApiError(api.updateSprint({ name: 'S', workingDays: 0 }), 'validation', 'workingDays');
     await api.saveMember(member);
     const reset = await api.resetDemo();
@@ -69,7 +85,10 @@ describe('createLocalApi', () => {
   });
 
   it('serializes concurrent writes so none are lost', async () => {
-    await Promise.all([api.saveMember({ ...member, name: 'One Person' }), api.saveMember({ ...member, name: 'Two Person' })]);
+    await Promise.all([
+      api.saveMember({ ...member, name: 'One Person' }),
+      api.saveMember({ ...member, name: 'Two Person' }),
+    ]);
     const names = (await api.getWorkspace()).members.map((m) => m.name);
     expect(names).toEqual(expect.arrayContaining(['One Person', 'Two Person']));
   });

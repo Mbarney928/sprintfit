@@ -1,5 +1,14 @@
 import { memberCapacity } from '@/entities/member';
-import { PRIORITIES, SKILLS, type Member, type Priority, type Skill, type WorkItem, type Workspace } from '@/shared/api';
+import { SKILL_NOUN } from '@/entities/work-item';
+import {
+  PRIORITIES,
+  SKILLS,
+  type Member,
+  type Priority,
+  type Skill,
+  type WorkItem,
+  type Workspace,
+} from '@/shared/api';
 
 export type SpillReason = 'no-capacity' | 'no-skill' | 'blocked' | 'cycle';
 
@@ -67,7 +76,11 @@ const fmt = (h: number) => `${Number.isInteger(h) ? h : h.toFixed(1)}h`;
  *    item to the same-skill member with the most remaining capacity, which balances load.
  * 5. Explains every item that does not fit and raises team-level warnings.
  */
-export function planSprint({ sprint, members, items }: Pick<Workspace, 'sprint' | 'members' | 'items'>): SprintPlan {
+export function planSprint({
+  sprint,
+  members,
+  items,
+}: Pick<Workspace, 'sprint' | 'members' | 'items'>): SprintPlan {
   const byId = new Map(items.map((i) => [i.id, i]));
   const order = new Map(items.map((i, index) => [i.id, index]));
 
@@ -141,7 +154,9 @@ export function planSprint({ sprint, members, items }: Pick<Workspace, 'sprint' 
 
   // Priority-aware topological order over the acyclic items.
   const remainingDeps = new Map(
-    items.filter((i) => acyclic.has(i.id)).map((i) => [i.id, i.dependsOn.filter((d) => acyclic.has(d)).length]),
+    items
+      .filter((i) => acyclic.has(i.id))
+      .map((i) => [i.id, i.dependsOn.filter((d) => acyclic.has(d)).length]),
   );
   const ready = [...remainingDeps].filter(([, n]) => n === 0).map(([id]) => id);
   const ordered: string[] = [];
@@ -180,7 +195,7 @@ export function planSprint({ sprint, members, items }: Pick<Workspace, 'sprint' 
     }
     const candidates = loads.filter((l) => l.member.skill === item.skill && l.capacityHours > 0);
     if (candidates.length === 0) {
-      spill(item, 'no-skill', `Nobody with ${item.skill} skills has capacity this sprint.`);
+      spill(item, 'no-skill', `Nobody with ${SKILL_NOUN[item.skill]} skills has capacity this sprint.`);
       continue;
     }
     const best = candidates.reduce((a, b) =>
@@ -192,14 +207,18 @@ export function planSprint({ sprint, members, items }: Pick<Workspace, 'sprint' 
         item,
         'no-capacity',
         free > 0
-          ? `Needs ${fmt(item.estimateHours)} of ${item.skill}; the most anyone has left is ${fmt(free)}. Consider splitting it.`
-          : `Needs ${fmt(item.estimateHours)} of ${item.skill}; all ${item.skill} capacity is committed.`,
+          ? `Needs ${fmt(item.estimateHours)} of ${SKILL_NOUN[item.skill]} work; the most anyone has left is ${fmt(free)}. Consider splitting it.`
+          : `Needs ${fmt(item.estimateHours)} of ${SKILL_NOUN[item.skill]} work; all ${SKILL_NOUN[item.skill]} capacity is committed.`,
       );
       continue;
     }
     best.plannedHours += item.estimateHours;
     best.itemIds.push(item.id);
-    planned.push({ item, memberId: best.member.id, effectivePriority: PRIORITIES[effectiveRank(id)] ?? item.priority });
+    planned.push({
+      item,
+      memberId: best.member.id,
+      effectivePriority: PRIORITIES[effectiveRank(id)] ?? item.priority,
+    });
   }
 
   for (const load of loads) {
@@ -218,7 +237,7 @@ export function planSprint({ sprint, members, items }: Pick<Workspace, 'sprint' 
     if (s.demandHours > s.capacityHours) {
       warnings.push({
         kind: 'skill-gap',
-        message: `${capitalize(s.skill)} work needs ${fmt(s.demandHours)} but the team has ${fmt(s.capacityHours)}.`,
+        message: `${capitalize(SKILL_NOUN[s.skill])} work needs ${fmt(s.demandHours)} but the team has ${fmt(s.capacityHours)}.`,
       });
     }
   }
@@ -240,7 +259,11 @@ export function planSprint({ sprint, members, items }: Pick<Workspace, 'sprint' 
     });
   }
 
-  spilled.sort((a, b) => rank(a.item.priority) - rank(b.item.priority) || (order.get(a.item.id) ?? 0) - (order.get(b.item.id) ?? 0));
+  spilled.sort(
+    (a, b) =>
+      rank(a.item.priority) - rank(b.item.priority) ||
+      (order.get(a.item.id) ?? 0) - (order.get(b.item.id) ?? 0),
+  );
   const capacityHours = sum(loads.map((l) => l.capacityHours));
   const plannedHours = sum(planned.map((p) => p.item.estimateHours));
   return {

@@ -31,7 +31,9 @@ describe('loadWorkspace', () => {
     const ws = loadWorkspace(store, createSeedWorkspace);
     expect(ws.version).toBe(WORKSPACE_VERSION);
     expect(ws.members[0]?.onCallDays).toBe(0);
-    expect(JSON.parse(store.data.get(STORAGE_KEY) ?? '{}').version).toBe(WORKSPACE_VERSION);
+    expect((JSON.parse(store.data.get(STORAGE_KEY) ?? '{}') as { version: number }).version).toBe(
+      WORKSPACE_VERSION,
+    );
   });
 
   it('keeps existing values when a migration adds a field', () => {

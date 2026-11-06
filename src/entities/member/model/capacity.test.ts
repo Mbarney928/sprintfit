@@ -4,7 +4,15 @@ import type { Member } from '@/shared/api';
 
 import { memberCapacity } from './capacity';
 
-const base: Member = { id: 'm', name: 'Test Person', skill: 'backend', hoursPerDay: 8, focusFactor: 0.75, ptoDays: 0, onCallDays: 0 };
+const base: Member = {
+  id: 'm',
+  name: 'Test Person',
+  skill: 'backend',
+  hoursPerDay: 8,
+  focusFactor: 0.75,
+  ptoDays: 0,
+  onCallDays: 0,
+};
 const sprint = { name: 'S', workingDays: 10 };
 
 describe('memberCapacity', () => {

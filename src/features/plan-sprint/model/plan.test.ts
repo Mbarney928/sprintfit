@@ -8,11 +8,28 @@ const sprint = { name: 'Test sprint', workingDays: 10 };
 
 function member(id: string, skill: Member['skill'], hours = 50, extra: Partial<Member> = {}): Member {
   // 10 days × 5h × 1.0 focus = 50h by default; `hours` scales hoursPerDay.
-  return { id, name: `Person ${id}`, skill, hoursPerDay: hours / 10, focusFactor: 1, ptoDays: 0, onCallDays: 0, ...extra };
+  return {
+    id,
+    name: `Person ${id}`,
+    skill,
+    hoursPerDay: hours / 10,
+    focusFactor: 1,
+    ptoDays: 0,
+    onCallDays: 0,
+    ...extra,
+  };
 }
 
 function item(id: string, estimateHours: number, extra: Partial<WorkItem> = {}): WorkItem {
-  return { id, title: `Item ${id}`, estimateHours, priority: 'medium', skill: 'backend', dependsOn: [], ...extra };
+  return {
+    id,
+    title: `Item ${id}`,
+    estimateHours,
+    priority: 'medium',
+    skill: 'backend',
+    dependsOn: [],
+    ...extra,
+  };
 }
 
 const plannedIds = (p: ReturnType<typeof planSprint>) => p.planned.map((x) => x.item.id);
@@ -23,7 +40,12 @@ describe('planSprint', () => {
     const plan = planSprint({
       sprint,
       members: [member('a', 'backend', 30)],
-      items: [item('low', 10, { priority: 'low' }), item('m1', 10), item('crit', 10, { priority: 'critical' }), item('m2', 10)],
+      items: [
+        item('low', 10, { priority: 'low' }),
+        item('m1', 10),
+        item('crit', 10, { priority: 'critical' }),
+        item('m2', 10),
+      ],
     });
     expect(plannedIds(plan)).toEqual(['crit', 'm1', 'm2']);
     expect(spillOf(plan, 'low')?.reason).toBe('no-capacity');
@@ -87,8 +109,13 @@ describe('planSprint', () => {
   });
 
   it('blocks items that depend on a missing item', () => {
-    const plan = planSprint({ sprint, members: [member('a', 'backend')], items: [item('x', 5, { dependsOn: ['gone'] })] });
-    expect(spillOf(plan, 'x')).toMatchObject({ reason: 'blocked', detail: expect.stringContaining('no longer exists') });
+    const plan = planSprint({
+      sprint,
+      members: [member('a', 'backend')],
+      items: [item('x', 5, { dependsOn: ['gone'] })],
+    });
+    expect(spillOf(plan, 'x')?.reason).toBe('blocked');
+    expect(spillOf(plan, 'x')?.detail).toContain('no longer exists');
   });
 
   it('reports work nobody has the skill (or time) for', () => {
@@ -106,7 +133,11 @@ describe('planSprint', () => {
     const plan = planSprint({
       sprint,
       members: [member('a', 'frontend', 30), member('b', 'frontend', 30)],
-      items: [item('1', 10, { skill: 'frontend' }), item('2', 10, { skill: 'frontend' }), item('3', 10, { skill: 'frontend' })],
+      items: [
+        item('1', 10, { skill: 'frontend' }),
+        item('2', 10, { skill: 'frontend' }),
+        item('3', 10, { skill: 'frontend' }),
+      ],
     });
     const hours = plan.loads.map((l) => l.plannedHours).sort();
     expect(hours).toEqual([10, 20]);
@@ -128,7 +159,14 @@ describe('planSprint', () => {
 
   it('handles an empty workspace', () => {
     const plan = planSprint({ sprint, members: [], items: [] });
-    expect(plan).toMatchObject({ planned: [], spilled: [], skills: [], warnings: [], utilization: 0, capacityHours: 0 });
+    expect(plan).toMatchObject({
+      planned: [],
+      spilled: [],
+      skills: [],
+      warnings: [],
+      utilization: 0,
+      capacityHours: 0,
+    });
   });
 
   it('produces the documented story for the demo data', () => {
@@ -137,11 +175,17 @@ describe('planSprint', () => {
 
     // The low-priority API contract is pulled forward because the critical card form needs it.
     expect(plan.planned.find((p) => p.item.id === 'w-contract')?.effectivePriority).toBe('critical');
-    expect(byReason('no-capacity')).toEqual(expect.arrayContaining(['w-promo-service', 'w-saved-cards', 'w-a11y-audit']));
+    expect(byReason('no-capacity')).toEqual(
+      expect.arrayContaining(['w-promo-service', 'w-saved-cards', 'w-a11y-audit']),
+    );
     expect(byReason('blocked')).toEqual(['w-promo-field']);
     expect(plan.warnings.map((w) => w.kind)).toEqual(expect.arrayContaining(['skill-gap', 'unavailable']));
     expect(plan.warnings.some((w) => w.kind === 'critical-spill')).toBe(false);
-    expect(plan.spilled.map((s) => s.item.priority)).toEqual([...plan.spilled.map((s) => s.item.priority)].sort((a, b) =>
-      ['critical', 'high', 'medium', 'low'].indexOf(a) - ['critical', 'high', 'medium', 'low'].indexOf(b)));
+    expect(plan.spilled.map((s) => s.item.priority)).toEqual(
+      [...plan.spilled.map((s) => s.item.priority)].sort(
+        (a, b) =>
+          ['critical', 'high', 'medium', 'low'].indexOf(a) - ['critical', 'high', 'medium', 'low'].indexOf(b),
+      ),
+    );
   });
 });

@@ -1,0 +1,21 @@
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.name {
+  flex: 1 1 240px;
+}
+.days {
+  flex: 0 1 140px;
+}
+.save {
+  margin-top: 26px;
+}
+@media (max-width: 600px) {
+  .save {
+    margin-top: 0;
+    width: 100%;
+  }
+}

@@ -45,11 +45,15 @@ jobs:
       - run: npm run build
       - run: npm run size:check
       - run: npm run lighthouse
+      - name: Lighthouse summary
+        if: always()
+        run: node scripts/lighthouse-summary.js >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: lighthouse-reports
           path: .lighthouseci/
+          include-hidden-files: true
           retention-days: 14
 
   e2e:

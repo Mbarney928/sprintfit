@@ -4,6 +4,13 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      # typescript-eslint supports TypeScript < 6.1; bump together once it widens its peer range.
+      - dependency-name: typescript
+        versions: ['>=6.1.0']
+      # Types track the Node major in "engines" and CI, not the latest Node release.
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
     groups:
       storybook:
         patterns: ['storybook', '@storybook/*']

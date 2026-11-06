@@ -193,13 +193,25 @@ of 85/85/85/80.
 - WCAG 2.2 AA axe scans of every page in light and dark mode.
 - An axe scan of every Storybook story in both themes.
 
-**Lighthouse** (desktop, median of 3 runs):
+**Lighthouse** (desktop preset, median of 3 runs on a developer laptop):
 
 | Performance | Accessibility | Best practices | SEO |
 | ----------- | ------------- | -------------- | --- |
 | 100         | 100           | 96             | 100 |
 
 LCP 0.5 s · TBT 0 ms · CLS 0.05.
+
+What CI enforces on every push:
+
+- Hard limits: accessibility 100, best practices ≥ 95, SEO ≥ 90, LCP ≤ 2.5 s, CLS ≤ 0.1, and a page weight
+  ≤ 250 KB.
+- A performance-score floor of 70.
+
+Shared CI runners have a much slower CPU than the desktop preset assumes, so the score there runs lower
+and varies with the hardware. Each run publishes its median scores in the job summary.
+
+The first full-page render goes through `useDeferredValue`, so React renders it in interruptible slices.
+That cut blocking time by about a third under 4× CPU throttling.
 
 **Bundle:** 134 KB gzip of initial JS (budget 160 KB). Each lazy page chunk is ≤ 4.5 KB (budget 25 KB).
 

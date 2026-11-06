@@ -201,17 +201,25 @@ of 85/85/85/80.
 
 LCP 0.5 s · TBT 0 ms · CLS 0.05.
 
-What CI enforces on every push:
+CI enforces these on every push and fails the build if any is missed:
 
-- Hard limits: accessibility 100, best practices ≥ 95, SEO ≥ 90, LCP ≤ 2.5 s, CLS ≤ 0.1, and a page weight
-  ≤ 250 KB.
-- A performance-score floor of 70.
+- Scores: performance ≥ 90, accessibility 100, best practices ≥ 95, SEO ≥ 90.
+- Metrics: LCP ≤ 2.5 s, TBT ≤ 200 ms, CLS ≤ 0.1.
+- Page weight ≤ 250 KB.
 
-Shared CI runners have a much slower CPU than the desktop preset assumes, so the score there runs lower
-and varies with the hardware. Each run publishes its median scores in the job summary.
+Each run publishes its median scores in the job summary.
 
-The first full-page render goes through `useDeferredValue`, so React renders it in interruptible slices.
-That cut blocking time by about a third under 4× CPU throttling.
+These budgets have already caught a real regression. On Linux runners the loading skeleton flashed and
+was then replaced by the plan, while a classic scrollbar appeared and the footer moved down. CLS was
+0.81, which never showed on a Mac. The fix has three parts:
+
+- The skeleton appears only if loading takes longer than 400 ms. The screen-reader announcement is
+  still immediate.
+- The scrollbar gutter is reserved from the start.
+- The footer starts below the fold.
+
+The first full-page render also goes through `useDeferredValue`, so React renders it in interruptible
+slices.
 
 **Bundle:** 134 KB gzip of initial JS (budget 160 KB). Each lazy page chunk is ≤ 4.5 KB (budget 25 KB).
 

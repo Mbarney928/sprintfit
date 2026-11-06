@@ -61,6 +61,8 @@
 }
 .main {
   flex: 1;
+  /* Keeps the footer below the fold from first paint, so arriving content never pushes it (no CLS). */
+  min-height: 100vh;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;

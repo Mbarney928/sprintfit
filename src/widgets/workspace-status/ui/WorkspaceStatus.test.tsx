@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -8,9 +8,19 @@ import { renderWithApi } from '@/test/renderWithApi';
 import { WorkspaceStatus } from './WorkspaceStatus';
 
 describe('WorkspaceStatus', () => {
-  it('announces loading', () => {
-    render(<WorkspaceStatus isPending error={null} onRetry={vi.fn()} />);
-    expect(screen.getByText('Loading workspace').parentElement).toHaveAttribute('aria-busy', 'true');
+  it('announces loading at once but only shows a skeleton for slow loads', () => {
+    vi.useFakeTimers();
+    try {
+      const { container } = render(<WorkspaceStatus isPending error={null} onRetry={vi.fn()} />);
+      expect(screen.getByText('Loading workspace').parentElement).toHaveAttribute('aria-busy', 'true');
+      expect(container.querySelector('[aria-hidden="true"]')).toBeNull();
+      act(() => {
+        vi.advanceTimersByTime(400);
+      });
+      expect(container.querySelector('[aria-hidden="true"]')).not.toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('offers retry for unexpected errors without leaking details', async () => {

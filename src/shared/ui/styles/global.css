@@ -7,6 +7,8 @@
 }
 
 html {
+  /* Reserve the scrollbar's space so content growing past the fold never shifts the layout sideways. */
+  scrollbar-gutter: stable;
   -webkit-text-size-adjust: 100%;
 }
 
